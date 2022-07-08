@@ -1,8 +1,9 @@
 package katas;
 
+import model.BoxArt;
 import model.Movie;
 import util.DataUtil;
-
+import java.util.Comparator;
 import java.util.List;
 
 /*
@@ -11,9 +12,26 @@ import java.util.List;
     Output: String
 */
 public class Kata6 {
+    private Kata6() {
+
+    }
     public static String execute() {
         List<Movie> movies = DataUtil.getMovies();
 
-        return "someUrl";
+        return movies.stream()
+                .map(Movie::getBoxarts)
+                .reduce((boxArts, another) -> {
+            var boxArt1 = boxArts.stream()
+                    .max(Comparator.comparing(BoxArt::getWidth))
+                    .orElseThrow();
+            var boxArt2 = another.stream()
+                    .max(Comparator.comparing(BoxArt::getWidth))
+                    .orElseThrow();
+            var max = boxArt1.getWidth() > boxArt2.getWidth() ? boxArt1 : boxArt2;
+            return List.of(max);
+
+        }).orElseThrow().stream().map(BoxArt::getUrl).findFirst().orElseThrow();
+
+
     }
 }
